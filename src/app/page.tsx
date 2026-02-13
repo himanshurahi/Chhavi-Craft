@@ -27,7 +27,7 @@ export default function Home() {
               Unique & useful gifts
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-[var(--muted)]">
-              We focus on gifts that are both thoughtful and practical. Every item can be personalised with a name or logo.
+              Thoughtful, practical gifts—QR stands, dog tags, photo albums & more. Every item can be personalised with your name or logo. Scan. Share. Personalise.
             </p>
             <a
               href="/#categories"

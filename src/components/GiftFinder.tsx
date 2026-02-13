@@ -59,7 +59,19 @@ export default function GiftFinder() {
   };
 
   return (
-    <section id="gift-finder" className="border-t-4 border-[var(--accent)] bg-white">
+    <section id="gift-finder" className="relative border-t-4 border-[var(--accent)] bg-white">
+      {/* Subtle QR-style square border accent */}
+      <div className="absolute left-0 right-0 top-0 h-1 overflow-hidden">
+        <div className="flex h-full gap-1 px-2" aria-hidden>
+          {[...Array(20)].map((_, i) => (
+            <span
+              key={i}
+              className="w-2 shrink-0 bg-[var(--accent)] opacity-20"
+              style={{ height: "4px" }}
+            />
+          ))}
+        </div>
+      </div>
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
           <h2 className="shrink-0 text-xl font-bold text-[var(--foreground)] sm:text-2xl">
