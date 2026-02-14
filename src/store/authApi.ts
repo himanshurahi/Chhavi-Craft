@@ -1,6 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+import { api } from "./baseApi";
 
 export type AuthUser = {
   id: number;
@@ -42,29 +40,7 @@ export type LogoutResponse = {
   message: string;
 };
 
-export type ApiError = {
-  message: string;
-  errors?: Record<string, string[]>;
-};
-
-const baseQuery = fetchBaseQuery({
-  baseUrl: API_BASE.replace(/\/$/, ""),
-  prepareHeaders: (headers, { getState }) => {
-    headers.set("Content-Type", "application/json");
-    headers.set("Accept", "application/json");
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("chhavi_craft_token");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-    }
-    return headers;
-  },
-});
-
-export const authApi = createApi({
-  reducerPath: "authApi",
-  baseQuery,
+export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<RegisterResponse, RegisterRequest>({
       query: (body) => ({
@@ -112,4 +88,10 @@ export const authApi = createApi({
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useGetUserQuery, useLazyGetUserQuery, useLogoutMutation } = authApi;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useGetUserQuery,
+  useLazyGetUserQuery,
+  useLogoutMutation,
+} = authApi;

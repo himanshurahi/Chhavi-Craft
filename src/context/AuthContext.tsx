@@ -7,8 +7,8 @@ import {
   useLoginMutation,
   useLogoutMutation,
   useLazyGetUserQuery,
-} from "@/store/api";
-import type { ApiError } from "@/store/api";
+} from "@/store/authApi";
+import type { ApiError } from "@/store/baseApi";
 
 type User = { id?: number; email: string; name: string } | null;
 
