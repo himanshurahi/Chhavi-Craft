@@ -35,7 +35,7 @@ export default function Categories() {
   return (
     <section id="categories" className="px-3 py-6 sm:px-4 sm:py-8 md:px-6">
       <div className="mx-auto max-w-6xl">
-        <div className="overflow-hidden rounded-2xl border-2 border-[var(--accent)] bg-white">
+        <div className="overflow-hidden rounded-2xl border-2 border-[var(--accent)] bg-[var(--card)]">
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6">
             {categories.map((cat, index) => (
               <Link

@@ -82,7 +82,7 @@ export default function OrderConfirmationPage() {
             {order.items.map((item) => (
               <div
                 key={item.id}
-                className="flex justify-between rounded-lg border border-[var(--border)] bg-white px-4 py-3 text-sm"
+                className="flex justify-between rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm"
               >
                 <span className="text-[var(--foreground)]">
                   {item.name} × {item.quantity}

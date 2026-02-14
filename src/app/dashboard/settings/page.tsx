@@ -60,7 +60,7 @@ export default function DashboardSettingsPage() {
                 name="name"
                 type="text"
                 placeholder="Your name"
-                className="mt-2 w-full rounded-lg border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               />
               <ErrorMessage name="name" component="p" className="mt-1 text-sm text-red-600" />
             </div>
@@ -74,7 +74,7 @@ export default function DashboardSettingsPage() {
                 name="email"
                 type="email"
                 placeholder="you@example.com"
-                className="mt-2 w-full rounded-lg border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               />
               <ErrorMessage name="email" component="p" className="mt-1 text-sm text-red-600" />
             </div>
@@ -88,7 +88,7 @@ export default function DashboardSettingsPage() {
                 name="phone"
                 type="tel"
                 placeholder="089509 62636"
-                className="mt-2 w-full rounded-lg border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               />
               <ErrorMessage name="phone" component="p" className="mt-1 text-sm text-red-600" />
             </div>
@@ -103,7 +103,7 @@ export default function DashboardSettingsPage() {
                 as="textarea"
                 rows={3}
                 placeholder="Your delivery address"
-                className="mt-2 w-full resize-none rounded-lg border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="mt-2 w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               />
               <ErrorMessage name="address" component="p" className="mt-1 text-sm text-red-600" />
             </div>

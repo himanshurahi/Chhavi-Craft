@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { RiMenuLine, RiCloseLine, RiSearchLine, RiUserLine, RiShoppingBagLine } from "react-icons/ri";
+import { RiMenuLine, RiCloseLine, RiSearchLine, RiUserLine, RiShoppingBagLine, RiSunLine, RiMoonLine } from "react-icons/ri";
 import { FaGift } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -21,8 +22,18 @@ export default function Nav() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const initials = user?.name
+    ? user.name
+        .split(/[\s.]+/)
+        .filter(Boolean)
+        .map((p) => p[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) || user.email.slice(0, 2).toUpperCase()
+    : null;
   const { itemCount: cartCount } = useCart();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (searchOpen) {
@@ -39,12 +50,12 @@ export default function Nav() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-white">
+    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--card)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <div className="flex items-center gap-4">
           <button
             type="button"
-            className="rounded p-2 text-[var(--foreground)] hover:bg-[var(--border)]"
+            className="rounded p-2 text-[var(--foreground)] hover:bg-[var(--border)] md:hidden"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
           >
@@ -80,6 +91,14 @@ export default function Nav() {
         <div className="flex items-center gap-2 sm:gap-4">
           <button
             type="button"
+            onClick={toggleTheme}
+            className="hidden rounded-full p-2 text-[var(--foreground)] hover:bg-[var(--border)] md:flex"
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <RiSunLine className="h-5 w-5 sm:h-6 sm:w-6" /> : <RiMoonLine className="h-5 w-5 sm:h-6 sm:w-6" />}
+          </button>
+          <button
+            type="button"
             onClick={() => setSearchOpen(true)}
             className="rounded-full p-2 text-[var(--foreground)] hover:bg-[var(--border)]"
             aria-label="Search"
@@ -88,10 +107,16 @@ export default function Nav() {
           </button>
           <Link
             href={isAuthenticated ? "/dashboard" : "/login"}
-            className="rounded-full p-2 text-[var(--foreground)] hover:bg-[var(--border)]"
+            className="flex items-center justify-center rounded-full p-2 text-[var(--foreground)] hover:bg-[var(--border)]"
             aria-label={isAuthenticated ? "Dashboard" : "Log in"}
           >
-            <RiUserLine className="h-5 w-5 sm:h-6 sm:w-6" />
+            {isAuthenticated && initials ? (
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white sm:h-9 sm:w-9 sm:text-sm">
+                {initials}
+              </span>
+            ) : (
+              <RiUserLine className="h-5 w-5 sm:h-6 sm:w-6" />
+            )}
           </Link>
           <Link
             href="/cart"
@@ -124,7 +149,7 @@ export default function Nav() {
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="relative rounded-2xl border border-[var(--border)] bg-white p-4 shadow-xl">
+          <div className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-xl">
               <div className="flex items-center gap-3">
                 <RiSearchLine className="h-6 w-6 shrink-0 text-[var(--muted)]" />
                 <input
@@ -148,9 +173,13 @@ export default function Nav() {
           </div>
         </div>
 
-      {open && (
-        <div className="border-t border-[var(--border)] bg-white px-4 py-4 md:hidden">
-          <nav className="flex flex-col gap-2">
+      {/* Mobile menu - slide animation, hidden on desktop */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-out md:hidden ${
+            open ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <nav className="flex flex-col gap-2 overflow-y-auto border-t border-[var(--border)] bg-[var(--card)] px-4 py-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -164,15 +193,17 @@ export default function Nav() {
             <Link href="/#bulk" className="py-2 text-sm font-medium text-[var(--accent)]" onClick={() => setOpen(false)}>
               Bulk orders
             </Link>
-            <Link href="/cart" className="py-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--accent)]" onClick={() => setOpen(false)}>
-              Cart {cartCount > 0 && `(${cartCount})`}
-            </Link>
-            <Link href={isAuthenticated ? "/dashboard" : "/login"} className="py-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--accent)]" onClick={() => setOpen(false)}>
-              {isAuthenticated ? "Dashboard" : "Log in"}
-            </Link>
+            <button
+              type="button"
+              onClick={() => { toggleTheme(); setOpen(false); }}
+              className="flex items-center gap-2 py-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--accent)]"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <RiSunLine className="h-5 w-5" /> : <RiMoonLine className="h-5 w-5" />}
+              {theme === "dark" ? "Light mode" : "Dark mode"}
+            </button>
           </nav>
         </div>
-      )}
     </header>
   );
 }

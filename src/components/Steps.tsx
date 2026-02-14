@@ -29,7 +29,7 @@ const steps = [
 export default function Steps() {
   return (
     <section className="relative overflow-hidden py-20">
-      <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-white to-[var(--background)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-white to-[var(--background)] dark:via-[var(--card)]" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <div className="text-center">
           <span className="inline-block rounded-full bg-[var(--accent)]/10 px-4 py-1.5 text-sm font-semibold text-[var(--accent)]">
@@ -57,9 +57,9 @@ export default function Steps() {
               />
 
               <div
-                className={`relative flex h-full min-h-[280px] flex-col rounded-3xl border border-[var(--border)] bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-[var(--accent)]/30 ${step.bgGlow} hover:scale-[1.02] md:min-h-[300px]`}
+                className={`relative flex h-full min-h-[280px] flex-col rounded-3xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-[var(--accent)]/30 ${step.bgGlow} dark:bg-[var(--card)] hover:scale-[1.02] md:min-h-[300px]`}
               >
-                <span className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--foreground)] text-sm font-bold text-white shadow-md">
+                <span className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--foreground)] text-sm font-bold text-white shadow-md dark:bg-[var(--accent)]">
                   {i + 1}
                 </span>
 

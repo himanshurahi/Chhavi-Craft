@@ -5,7 +5,7 @@ const QR_BG = "data:image/svg+xml,%3Csvg width='32' height='32' xmlns='http://ww
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[var(--background)] via-[#f5f0e8] to-[var(--accent-light)]/20">
+    <section className="relative overflow-hidden bg-gradient-to-br from-[var(--background)] via-[#f5f0e8] to-[var(--accent-light)]/20 dark:via-[#252019] dark:to-[#2d251d]">
       <div className="absolute inset-0 bg-[length:32px_32px] opacity-90" style={{ backgroundImage: `url("${QR_BG}")` }} />
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
         <div className="max-w-2xl">

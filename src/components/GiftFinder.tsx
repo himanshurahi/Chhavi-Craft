@@ -59,7 +59,7 @@ export default function GiftFinder() {
   };
 
   return (
-    <section id="gift-finder" className="relative border-t-4 border-[var(--accent)] bg-white">
+    <section id="gift-finder" className="relative border-t-4 border-[var(--accent)] bg-[var(--card)]">
       {/* Subtle QR-style square border accent */}
       <div className="absolute left-0 right-0 top-0 h-1 overflow-hidden">
         <div className="flex h-full gap-1 px-2" aria-hidden>
@@ -83,7 +83,7 @@ export default function GiftFinder() {
               <select
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--card)] py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               >
                 {purposeOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -98,7 +98,7 @@ export default function GiftFinder() {
               <select
                 value={profession}
                 onChange={(e) => setProfession(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--card)] py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               >
                 {professionOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -113,7 +113,7 @@ export default function GiftFinder() {
               <select
                 value={relation}
                 onChange={(e) => setRelation(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--card)] py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               >
                 {relationOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -128,7 +128,7 @@ export default function GiftFinder() {
               <select
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--card)] py-3 pl-4 pr-10 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
               >
                 {priceOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>

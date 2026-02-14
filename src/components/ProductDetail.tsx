@@ -92,7 +92,7 @@ export default function ProductDetail({ product }: Props) {
         >
           <div className="flex flex-col items-center gap-4">
             <Icon className="h-24 w-24 sm:h-32 sm:w-32 text-[var(--accent)]" />
-            <span className="rounded-lg bg-white/80 px-4 py-2 text-sm font-medium text-[var(--muted)]">
+            <span className="rounded-lg bg-[var(--card)]/80 px-4 py-2 text-sm font-medium text-[var(--muted)]">
               Your Name Here
             </span>
           </div>
@@ -142,7 +142,7 @@ export default function ProductDetail({ product }: Props) {
             <label className="block text-sm font-medium text-[var(--foreground)]">
               Upload image
             </label>
-            <label className="mt-2 flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--border)] bg-white px-4 py-3">
+            <label className="mt-2 flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3">
               <span className="rounded border border-[var(--border)] bg-[var(--background)] px-3 py-1.5 text-sm text-[var(--foreground)]">
                 Choose file
               </span>
@@ -169,7 +169,7 @@ export default function ProductDetail({ product }: Props) {
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name or message"
               rows={3}
-              className="mt-2 w-full resize-none rounded-lg border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+              className="mt-2 w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
             />
           </div>
           <p className="mt-2 text-sm font-medium text-red-600">
@@ -179,7 +179,7 @@ export default function ProductDetail({ product }: Props) {
           {/* Quantity */}
           <div className="mt-6">
             <label className="block text-sm font-medium text-[var(--foreground)]">Quantity</label>
-            <div className="mt-2 inline-flex items-center overflow-hidden rounded-lg border border-[var(--border)] bg-white">
+            <div className="mt-2 inline-flex items-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]">
               <button
                 type="button"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -192,7 +192,7 @@ export default function ProductDetail({ product }: Props) {
                 min={1}
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                className="h-10 w-14 border-x border-[var(--border)] bg-white text-center text-sm text-[var(--foreground)] focus:outline-none"
+                className="h-10 w-14 border-x border-[var(--border)] bg-[var(--card)] text-center text-sm text-[var(--foreground)] focus:outline-none"
               />
               <button
                 type="button"
@@ -225,7 +225,7 @@ export default function ProductDetail({ product }: Props) {
           <form onSubmit={handleAddToCart} className="mt-6 flex flex-col gap-3 sm:flex-row">
             <button
               type="submit"
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-[var(--foreground)] bg-white px-6 py-4 text-base font-semibold text-[var(--foreground)] transition hover:bg-[var(--background)]"
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-[var(--foreground)] bg-[var(--card)] px-6 py-4 text-base font-semibold text-[var(--foreground)] transition hover:bg-[var(--background)]"
             >
               <RiShoppingCartLine className="h-5 w-5" />
               {added ? "Added!" : "Add to cart"}

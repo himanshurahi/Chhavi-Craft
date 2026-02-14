@@ -22,7 +22,7 @@ const infoLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--foreground)] text-white">
+    <footer className="bg-[var(--foreground)] text-white dark:bg-[#1a1612] dark:border-t dark:border-[var(--border)]">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -71,7 +71,7 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Your email"
-                className="flex-1 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm placeholder:text-white/50 focus:border-[var(--accent-light)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-light)]"
+                className="flex-1 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white placeholder:text-white/50 focus:border-[var(--accent-light)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-light)] dark:border-white/30 dark:bg-white/5"
               />
               <button
                 type="submit"
