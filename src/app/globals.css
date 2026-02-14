@@ -75,3 +75,8 @@ body {
     transform: scale(1);
   }
 }
+
+/* Swiper testimonials pagination */
+.swiper-pagination-bullet-active {
+  background: var(--accent) !important;
+}

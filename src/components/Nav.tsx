@@ -66,11 +66,11 @@ export default function Nav() {
               <FaGift className="h-8 w-8" />
             </span>
             <div>
-              <span className="block font-display text-xl font-normal text-[var(--accent)] sm:text-2xl">
+              <span className="block font-display text-lg font-normal text-[var(--accent)] sm:text-xl md:text-2xl">
                 Chhavi Craft
               </span>
               <span className="block text-xs font-medium tracking-wide text-[var(--foreground)]">
-                THE CORPORATE GIFT STORE
+                Crafting your Curiosity
               </span>
             </div>
           </Link>
