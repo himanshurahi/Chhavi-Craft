@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Outfit, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
+import FullScreenLoader from "@/components/FullScreenLoader";
+import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -26,7 +29,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${outfit.variable} ${dmSerif.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>
+          <CartProvider>
+            <FullScreenLoader />
+            {children}
+          </CartProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

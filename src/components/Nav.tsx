@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RiMenuLine, RiCloseLine, RiSearchLine, RiUserLine, RiShoppingBagLine } from "react-icons/ri";
 import { FaGift } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -16,7 +18,25 @@ const navLinks = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const [cartCount] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const { isAuthenticated } = useAuth();
+  const { itemCount: cartCount } = useCart();
+
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSearchOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-white">
@@ -58,17 +78,18 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          <Link
-            href="/search"
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
             className="rounded-full p-2 text-[var(--foreground)] hover:bg-[var(--border)]"
             aria-label="Search"
           >
             <RiSearchLine className="h-5 w-5 sm:h-6 sm:w-6" />
-          </Link>
+          </button>
           <Link
-            href="/login"
+            href={isAuthenticated ? "/dashboard" : "/login"}
             className="rounded-full p-2 text-[var(--foreground)] hover:bg-[var(--border)]"
-            aria-label="Account"
+            aria-label={isAuthenticated ? "Dashboard" : "Log in"}
           >
             <RiUserLine className="h-5 w-5 sm:h-6 sm:w-6" />
           </Link>
@@ -87,6 +108,46 @@ export default function Nav() {
         </div>
       </div>
 
+      {/* Search overlay - always in DOM for transitions */}
+      <div
+        className={`fixed inset-0 z-[60] flex items-start justify-center bg-black/40 pt-[20vh] px-4 backdrop-blur-sm transition-opacity duration-300 ease-out ${
+          searchOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setSearchOpen(false)}
+        role="dialog"
+        aria-label="Search"
+        aria-hidden={!searchOpen}
+      >
+        <div
+          className={`w-full max-w-2xl transition-all duration-300 ease-out ${
+            searchOpen ? "translate-y-0 scale-100 opacity-100" : "-translate-y-4 scale-95 opacity-0"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="relative rounded-2xl border border-[var(--border)] bg-white p-4 shadow-xl">
+              <div className="flex items-center gap-3">
+                <RiSearchLine className="h-6 w-6 shrink-0 text-[var(--muted)]" />
+                <input
+                  ref={searchInputRef}
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="flex-1 text-lg text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none sm:text-xl"
+                />
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(false)}
+                  className="rounded-full p-2 text-[var(--muted)] hover:bg-[var(--border)] hover:text-[var(--foreground)]"
+                  aria-label="Close search"
+                >
+                  <RiCloseLine className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       {open && (
         <div className="border-t border-[var(--border)] bg-white px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-2">
@@ -102,6 +163,12 @@ export default function Nav() {
             ))}
             <Link href="/#bulk" className="py-2 text-sm font-medium text-[var(--accent)]" onClick={() => setOpen(false)}>
               Bulk orders
+            </Link>
+            <Link href="/cart" className="py-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--accent)]" onClick={() => setOpen(false)}>
+              Cart {cartCount > 0 && `(${cartCount})`}
+            </Link>
+            <Link href={isAuthenticated ? "/dashboard" : "/login"} className="py-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--accent)]" onClick={() => setOpen(false)}>
+              {isAuthenticated ? "Dashboard" : "Log in"}
             </Link>
           </nav>
         </div>

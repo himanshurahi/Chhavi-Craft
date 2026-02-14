@@ -26,3 +26,40 @@ body {
 .font-display {
   font-family: var(--font-dm-serif), serif;
 }
+
+.loader-icon {
+  opacity: 0;
+  transform: scale(0.5);
+  animation: loaderIcon 0.5s ease-out forwards;
+}
+
+@keyframes loaderIcon {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
