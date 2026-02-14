@@ -50,7 +50,7 @@ export default function ProductDetail({ product }: Props) {
     { id: "returns", title: "Easy Returns", Icon: RiRefreshLine, content: "30-day easy return policy. Contact us if you're not satisfied." },
     { id: "personalization", title: "Free Personalization", Icon: RiFileTextLine, content: "Add your name or logo at no extra cost. Precision laser engraving." },
     { id: "shipping", title: "Free Shipping", Icon: RiTruckLine, content: "Free shipping on orders above ₹999. Delivery within 5-7 business days." },
-    { id: "care", title: "Customer Care", Icon: RiCustomerService2Line, content: "Need help? Call 089509 62636 or email us." },
+    { id: "care", title: "Customer Care", Icon: RiCustomerService2Line, content: "Need help? Call +91 89509 62636 or email us." },
   ];
 
   const ratingBreakdown = [
@@ -116,9 +116,11 @@ export default function ProductDetail({ product }: Props) {
 
           {/* Pricing */}
           <div className="mt-6 flex flex-wrap items-baseline gap-3">
-            <span className="text-lg text-[var(--muted)] line-through">
-              Rs. {product.originalPrice.toLocaleString("en-IN")}.00
-            </span>
+            {product.originalPrice && (
+              <span className="text-lg text-[var(--muted)] line-through">
+                Rs. {product.originalPrice.toLocaleString("en-IN")}.00
+              </span>
+            )}
             <span className="text-2xl font-bold text-[var(--foreground)]">
               Rs. {product.price.toLocaleString("en-IN")}.00
             </span>
@@ -206,7 +208,7 @@ export default function ProductDetail({ product }: Props) {
 
           {/* Buy in bulk */}
           <a
-            href="https://wa.me/918950962636"
+            href="https://wa.me/918950962636?text=Hi%21%20I%27m%20interested%20in%20placing%20a%20bulk%20order%20for%20Chhavi%20Craft%20products.%20Please%20share%20details."
             target="_blank"
             rel="noopener noreferrer"
             className="mt-5 inline-flex items-center gap-2 text-sm text-[var(--foreground)] hover:text-[var(--accent)]"

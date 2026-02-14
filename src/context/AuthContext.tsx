@@ -8,6 +8,7 @@ type User = { email: string; name: string } | null;
 type AuthContextType = {
   user: User;
   login: (email: string, password: string, returnTo?: string) => void;
+  signup: (name: string, email: string, password: string, returnTo?: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
   isAuthReady: boolean;
@@ -44,6 +45,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [router]
   );
 
+  const signup = useCallback(
+    (name: string, email: string, _password: string, returnTo?: string) => {
+      const u = { email, name: name.trim() || email.split("@")[0] };
+      setUser(u);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+      } catch {}
+      router.push(returnTo || "/dashboard");
+    },
+    [router]
+  );
+
   const logout = useCallback(() => {
     setUser(null);
     try {
@@ -57,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         login,
+        signup,
         logout,
         isAuthenticated: !!user,
         isAuthReady: mounted,

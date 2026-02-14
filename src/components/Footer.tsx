@@ -35,8 +35,8 @@ export default function Footer() {
               Model Town, Sonipat, Haryana 131001
             </p>
             <p className="mt-2">
-              <a href="tel:08950962636" className="text-sm text-[var(--accent-light)] hover:underline">
-                089509 62636
+              <a href="tel:+918950962636" className="text-sm text-[var(--accent-light)] hover:underline">
+                +91 89509 62636
               </a>
             </p>
           </div>

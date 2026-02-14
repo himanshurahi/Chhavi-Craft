@@ -156,7 +156,7 @@ export default function CheckoutPage() {
                       id="phone"
                       name="phone"
                       type="tel"
-                      placeholder="089509 62636"
+                      placeholder="+91 89509 62636"
                       className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
                     />
                     <ErrorMessage name="phone" component="p" className="mt-1 text-sm text-red-600" />

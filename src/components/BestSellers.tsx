@@ -51,9 +51,11 @@ function ProductCard({ product }: { product: (typeof products)[0] }) {
           <span className="font-semibold text-[var(--accent)]">
             ₹{product.price.toLocaleString("en-IN")}
           </span>
-          <span className="text-sm text-[var(--muted)] line-through">
-            ₹{product.originalPrice.toLocaleString("en-IN")}
-          </span>
+          {product.originalPrice && (
+            <span className="text-sm text-[var(--muted)] line-through">
+              ₹{product.originalPrice.toLocaleString("en-IN")}
+            </span>
+          )}
         </div>
       </div>
     </Link>
@@ -71,12 +73,12 @@ export default function BestSellers() {
             </h2>
             <p className="mt-2 text-[var(--muted)]">Most loved by our customers</p>
           </div>
-          <Link href="/#categories" className="text-sm font-medium text-[var(--accent)] hover:underline">
+          <Link href="/products" className="text-sm font-medium text-[var(--accent)] hover:underline">
             View all →
           </Link>
         </div>
         <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-          {products.map((p) => (
+          {products.slice(0, 4).map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>

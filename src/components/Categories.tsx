@@ -17,18 +17,18 @@ import {
 } from "react-icons/ri";
 
 const categories = [
-  { id: "diaries", name: "Diaries & Notebook", href: "/#diaries", Icon: RiBook2Line, color: "text-red-500" },
-  { id: "pens", name: "Pens and Boxes", href: "/#pens", Icon: RiPenNibLine, color: "text-teal-500" },
-  { id: "organizers", name: "Desk Organizers", href: "/#organizers", Icon: RiComputerLine, color: "text-amber-600" },
-  { id: "combos", name: "Gift Combos", href: "/#combos", Icon: RiGiftLine, color: "text-red-500" },
-  { id: "planners", name: "Planners & Calendars", href: "/#planners", Icon: RiCalendarLine, color: "text-gray-600" },
-  { id: "mugs", name: "Mugs & Bottles", href: "/#mugs", Icon: RiCupLine, color: "text-blue-500" },
-  { id: "cardholder", name: "Business Cardholder", href: "/#cardholder", Icon: RiBankCardLine, color: "text-sky-400" },
-  { id: "bracelets", name: "Unisex Bracelets", href: "/#bracelets", Icon: RiHeartLine, color: "text-rose-400" },
+  { id: "diaries", name: "Diaries & Notebook", href: "/products?category=diaries", Icon: RiBook2Line, color: "text-red-500" },
+  { id: "pens", name: "Pens and Boxes", href: "/products?category=pens", Icon: RiPenNibLine, color: "text-teal-500" },
+  { id: "organizers", name: "Desk Organizers", href: "/products?category=organizers", Icon: RiComputerLine, color: "text-amber-600" },
+  { id: "combos", name: "Gift Combos", href: "/products?category=combos", Icon: RiGiftLine, color: "text-red-500" },
+  { id: "planners", name: "Planners & Calendars", href: "/products?category=planners", Icon: RiCalendarLine, color: "text-gray-600" },
+  { id: "mugs", name: "Mugs & Bottles", href: "/products?category=mugs", Icon: RiCupLine, color: "text-blue-500" },
+  { id: "cardholder", name: "Business Cardholder", href: "/products", Icon: RiBankCardLine, color: "text-sky-400" },
+  { id: "bracelets", name: "Unisex Bracelets", href: "/products", Icon: RiHeartLine, color: "text-rose-400" },
   { id: "gift-finder", name: "Gift Finder", href: "/#gift-finder", Icon: RiSearchLine, color: "text-pink-500" },
   { id: "bulk", name: "Buy in Bulk", href: "/#bulk", Icon: RiBuildingLine, color: "text-sky-500" },
-  { id: "submit-name", name: "Submit Name", href: "/#submit-name", Icon: RiEditLine, color: "text-gray-700" },
-  { id: "past-projects", name: "Past Projects", href: "/#past-projects", Icon: RiLightbulbLine, color: "text-amber-400" },
+  { id: "submit-name", name: "Submit Name", href: "/products", Icon: RiEditLine, color: "text-gray-700" },
+  { id: "past-projects", name: "Past Projects", href: "/products", Icon: RiLightbulbLine, color: "text-amber-400" },
 ];
 
 export default function Categories() {

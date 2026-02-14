@@ -10,11 +10,11 @@ import { useTheme } from "@/context/ThemeContext";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/#pens", label: "Personalized Pens" },
-  { href: "/#diaries", label: "Corporate Diaries" },
-  { href: "/#organizers", label: "Desk Organizers" },
-  { href: "/#combos", label: "Gift Combos" },
-  { href: "/#household", label: "Household Gifts" },
+  { href: "/products?category=pens", label: "Personalized Pens" },
+  { href: "/products?category=diaries", label: "Corporate Diaries" },
+  { href: "/products?category=organizers", label: "Desk Organizers" },
+  { href: "/products?category=combos", label: "Gift Combos" },
+  { href: "/products", label: "Household Gifts" },
 ];
 
 export default function Nav() {

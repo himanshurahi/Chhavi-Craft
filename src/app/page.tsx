@@ -45,8 +45,8 @@ export default function Home() {
             <p className="mt-2 text-[var(--muted)]">Corporate or large quantity? Get in touch.</p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
               <a
-                href="https://wa.me/918950962636"
-                title="089509 62636"
+                href="https://wa.me/918950962636?text=Hi%21%20I%27m%20interested%20in%20placing%20a%20bulk%20order%20for%20Chhavi%20Craft%20products.%20Please%20share%20details."
+                title="+91 89509 62636"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-700"
