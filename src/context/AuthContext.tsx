@@ -2,68 +2,151 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import {
+  useRegisterMutation,
+  useLoginMutation,
+  useLogoutMutation,
+  useLazyGetUserQuery,
+} from "@/store/api";
+import type { ApiError } from "@/store/api";
 
-type User = { email: string; name: string } | null;
+type User = { id?: number; email: string; name: string } | null;
+
+const USER_STORAGE_KEY = "chhavi_craft_user";
 
 type AuthContextType = {
   user: User;
-  login: (email: string, password: string, returnTo?: string) => void;
-  signup: (name: string, email: string, password: string, returnTo?: string) => void;
-  logout: () => void;
+  login: (email: string, password: string, returnTo?: string) => Promise<{ ok: boolean; error?: ApiError }>;
+  signup: (
+    name: string,
+    email: string,
+    password: string,
+    passwordConfirmation: string,
+    returnTo?: string
+  ) => Promise<{ ok: boolean; error?: ApiError }>;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
   isAuthReady: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const STORAGE_KEY = "chhavi_craft_user";
+function parseStoredUser(): User | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = localStorage.getItem(USER_STORAGE_KEY);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    if (parsed?.email && parsed?.name) {
+      return { id: parsed.id, email: parsed.email, name: parsed.name };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(null);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
+  const [loginMutation] = useLoginMutation();
+  const [registerMutation] = useRegisterMutation();
+  const [logoutMutation] = useLogoutMutation();
+  const [getUser] = useLazyGetUserQuery();
+
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setUser(JSON.parse(stored));
-    } catch {
+    const token = typeof window !== "undefined" ? localStorage.getItem("chhavi_craft_token") : null;
+    if (!token) {
       setUser(null);
+      setMounted(true);
+      return;
     }
-    setMounted(true);
-  }, []);
+
+    const storedUser = parseStoredUser();
+    if (storedUser) setUser(storedUser);
+
+    getUser()
+      .unwrap()
+      .then((res) => {
+        setUser(res.user);
+        setMounted(true);
+      })
+      .catch(() => {
+        setUser(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("chhavi_craft_token");
+          localStorage.removeItem(USER_STORAGE_KEY);
+        }
+        setMounted(true);
+      });
+  }, [getUser]);
 
   const login = useCallback(
-    (email: string, _password: string, returnTo?: string) => {
-      const u = { email, name: email.split("@")[0] };
-      setUser(u);
+    async (
+      email: string,
+      password: string,
+      returnTo?: string
+    ): Promise<{ ok: boolean; error?: ApiError }> => {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-      } catch {}
-      router.push(returnTo || "/dashboard");
+        const result = await loginMutation({ email, password }).unwrap();
+        setUser(result.user);
+        router.push(returnTo || "/dashboard");
+        return { ok: true };
+      } catch (err: unknown) {
+        const e = err as { data?: ApiError; status?: number };
+        return {
+          ok: false,
+          error: e?.data || { message: "Login failed" },
+        };
+      }
     },
-    [router]
+    [loginMutation, router]
   );
 
   const signup = useCallback(
-    (name: string, email: string, _password: string, returnTo?: string) => {
-      const u = { email, name: name.trim() || email.split("@")[0] };
-      setUser(u);
+    async (
+      name: string,
+      email: string,
+      password: string,
+      passwordConfirmation: string,
+      returnTo?: string
+    ): Promise<{ ok: boolean; error?: ApiError }> => {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-      } catch {}
-      router.push(returnTo || "/dashboard");
+        const result = await registerMutation({
+          name,
+          email,
+          password,
+          password_confirmation: passwordConfirmation,
+        }).unwrap();
+        setUser(result.user);
+        router.push(returnTo || "/dashboard");
+        return { ok: true };
+      } catch (err: unknown) {
+        const e = err as { data?: ApiError; status?: number };
+        return {
+          ok: false,
+          error: e?.data || { message: "Registration failed" },
+        };
+      }
     },
-    [router]
+    [registerMutation, router]
   );
 
-  const logout = useCallback(() => {
-    setUser(null);
+  const logout = useCallback(async () => {
     try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+      await logoutMutation().unwrap();
+    } catch {
+      // Clear anyway on error (e.g. 401)
+    }
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("chhavi_craft_token");
+      localStorage.removeItem(USER_STORAGE_KEY);
+    }
+    setUser(null);
     router.push("/login");
-  }, [router]);
+  }, [logoutMutation, router]);
 
   return (
     <AuthContext.Provider

@@ -44,9 +44,26 @@ function SignupForm() {
           <Formik
             initialValues={{ name: "", email: "", password: "", confirmPassword: "" }}
             validationSchema={signupSchema}
-            onSubmit={(values) => signup(values.name, values.email, values.password, returnTo)}
+            onSubmit={async (values, { setFieldError, setStatus }) => {
+              setStatus(null);
+              const result = await signup(
+                values.name,
+                values.email,
+                values.password,
+                values.confirmPassword,
+                returnTo
+              );
+              if (!result.ok && result.error) {
+                const emailMsg = result.error.errors?.email?.[0];
+                const nameMsg = result.error.errors?.name?.[0];
+                const msg = result.error.message;
+                if (emailMsg) setFieldError("email", emailMsg);
+                if (nameMsg) setFieldError("name", nameMsg);
+                setStatus(emailMsg ?? nameMsg ?? msg);
+              }
+            }}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, status }) => (
               <Form className="mt-8 space-y-5">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-[var(--foreground)]">
@@ -116,12 +133,15 @@ function SignupForm() {
                     className="mt-1 text-sm text-red-600"
                   />
                 </div>
+                {status && (
+                  <p className="text-sm text-red-600">{status}</p>
+                )}
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="w-full rounded-lg bg-[var(--accent)] px-4 py-3 text-base font-semibold text-white transition hover:opacity-90 disabled:opacity-70"
                 >
-                  Sign up
+                  {isSubmitting ? "Signing up…" : "Sign up"}
                 </button>
               </Form>
             )}

@@ -40,9 +40,16 @@ function LoginForm() {
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={loginSchema}
-            onSubmit={(values) => login(values.email, values.password, returnTo)}
+            onSubmit={async (values, { setStatus }) => {
+              setStatus(null);
+              const result = await login(values.email, values.password, returnTo);
+              if (!result.ok && result.error) {
+                const msg = result.error.errors?.email?.[0] ?? result.error.message;
+                setStatus(msg);
+              }
+            }}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, status }) => (
               <Form className="mt-8 space-y-5">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">
@@ -78,12 +85,15 @@ function LoginForm() {
                     className="mt-1 text-sm text-red-600"
                   />
                 </div>
+                {status && (
+                  <p className="text-sm text-red-600">{status}</p>
+                )}
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="w-full rounded-lg bg-[var(--accent)] px-4 py-3 text-base font-semibold text-white transition hover:opacity-90 disabled:opacity-70"
                 >
-                  Log in
+                  {isSubmitting ? "Logging in…" : "Log in"}
                 </button>
               </Form>
             )}

@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import FullScreenLoader from "@/components/FullScreenLoader";
-import { AuthProvider } from "@/context/AuthContext";
-import { CartProvider } from "@/context/CartContext";
-import { ThemeProvider } from "@/context/ThemeContext";
+import Providers from "@/components/Providers";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -44,14 +42,10 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        <ThemeProvider>
-          <AuthProvider>
-            <CartProvider>
-              <FullScreenLoader />
-              {children}
-            </CartProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <Providers>
+          <FullScreenLoader />
+          {children}
+        </Providers>
       </body>
     </html>
   );
