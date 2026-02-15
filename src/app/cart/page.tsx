@@ -50,22 +50,26 @@ export default function CartPage() {
                   key={item.id}
                   className="flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 sm:flex-row sm:items-center sm:gap-6"
                 >
+                  {item.image_url && (
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="h-20 w-20 shrink-0 rounded-lg object-cover"
+                    />
+                  )}
                   <div className="flex-1">
                     <h3 className="font-semibold text-[var(--foreground)]">{item.name}</h3>
-                    {item.personalisation && (
-                      <p className="mt-1 text-sm text-[var(--muted)]">
-                        Personalisation: {item.personalisation}
-                      </p>
-                    )}
                     <p className="mt-2 font-semibold text-[var(--accent)]">
                       ₹{item.price.toLocaleString("en-IN")} each
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center overflow-hidden rounded-lg border border-[var(--border)]">
-                      <button
-                        type="button"
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateQuantity(item.id, Math.max(0, item.quantity - 1))
+                      }
                         className="flex h-10 w-10 items-center justify-center text-[var(--foreground)] hover:bg-[var(--background)]"
                       >
                         −
@@ -82,7 +86,7 @@ export default function CartPage() {
                       </button>
                     </div>
                     <p className="min-w-[80px] text-right font-semibold text-[var(--foreground)]">
-                      ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                      ₹{item.subtotal.toLocaleString("en-IN")}
                     </p>
                     <button
                       type="button"

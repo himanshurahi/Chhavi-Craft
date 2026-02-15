@@ -1,28 +1,24 @@
 import { notFound } from "next/navigation";
-import { getProductBySlug, products } from "@/lib/products";
 import Banner from "@/components/Banner";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import ProductDetail from "@/components/ProductDetail";
+import ProductDetailClient from "@/components/ProductDetailClient";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
 
-  if (!product) notFound();
+  if (!slug) notFound();
 
   return (
     <div className="min-h-screen">
       <Banner />
       <Nav />
       <main>
-        <ProductDetail product={product} />
+        <ProductDetailClient slug={slug} />
       </main>
       <Footer />
     </div>

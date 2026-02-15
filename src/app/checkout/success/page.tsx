@@ -88,7 +88,7 @@ export default function OrderConfirmationPage() {
                   {item.name} × {item.quantity}
                 </span>
                 <span className="font-semibold text-[var(--foreground)]">
-                  ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                  ₹{(item.subtotal ?? item.price * item.quantity).toLocaleString("en-IN")}
                 </span>
               </div>
             ))}

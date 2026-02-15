@@ -22,14 +22,13 @@ import {
 } from "react-icons/ri";
 import { MdPhotoLibrary } from "react-icons/md";
 import { FaWhatsapp } from "react-icons/fa";
-import type { products } from "@/lib/products";
+import type { Product } from "@/store/productsApi";
 import { useCart } from "@/context/CartContext";
-
-type Product = (typeof products)[0];
+import ProductGallery from "@/components/ProductGallery";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   "acrylic-qr-stand": RiQrCodeLine,
-  dog: RiPriceTag3Line,
+  "dog-tag": RiPriceTag3Line,
   "qr-menu-stand": RiRestaurant2Line,
   "photo-album": MdPhotoLibrary,
 };
@@ -37,13 +36,35 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 type Props = { product: Product };
 
 export default function ProductDetail({ product }: Props) {
-  const Icon = iconMap[product.slug] ?? RiQrCodeLine;
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [file, setFile] = useState<File | null>(null);
   const [added, setAdded] = useState(false);
   const [openAccordion, setOpenAccordion] = useState<string | null>("about");
   const { addItem } = useCart();
+
+  const imageUrls = (
+    product.image_urls?.length
+      ? product.image_urls.filter((u): u is string => !!u)
+      : product.image_url
+        ? [product.image_url]
+        : []
+  ) as string[];
+
+  const Icon = iconMap[product.slug] ?? RiQrCodeLine;
+  const galleryPlaceholder = (
+    <div className="flex flex-col items-center gap-4">
+      <Icon className="h-24 w-24 sm:h-32 sm:w-32 text-[var(--accent)]" />
+      <span className="rounded-lg bg-[var(--card)]/80 px-4 py-2 text-sm font-medium text-[var(--muted)]">
+        Your Name Here
+      </span>
+    </div>
+  );
+
+  const displayPrice = product.price;
+  const originalPrice = product.actual_price > product.price ? product.actual_price : undefined;
+  const tag = product.is_best_seller ? "Best Seller" : undefined;
+  const maxQuantity = Math.max(1, product.stock ?? 999);
 
   const accordionItems = [
     { id: "about", title: "About the Product", Icon: RiQuestionLine, content: product.description },
@@ -64,12 +85,11 @@ export default function ProductDetail({ product }: Props) {
 
   const handleAddToCart = (e: React.FormEvent) => {
     e.preventDefault();
-    addItem({
-      slug: product.slug,
+    addItem(product.id, quantity, {
       name: product.name,
+      slug: product.slug,
       price: product.price,
-      quantity,
-      personalisation: name || undefined,
+      image_url: product.image_url ?? product.image_urls?.[0],
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -78,7 +98,7 @@ export default function ProductDetail({ product }: Props) {
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
       <Link
-        href="/"
+        href="/products"
         className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--accent)]"
       >
         <RiArrowLeftLine className="h-4 w-4" />
@@ -86,22 +106,16 @@ export default function ProductDetail({ product }: Props) {
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-        {/* Image / Visual */}
-        <div
-          className={`aspect-square overflow-hidden rounded-2xl bg-gradient-to-br ${product.visualBg} flex items-center justify-center p-12`}
-        >
-          <div className="flex flex-col items-center gap-4">
-            <Icon className="h-24 w-24 sm:h-32 sm:w-32 text-[var(--accent)]" />
-            <span className="rounded-lg bg-[var(--card)]/80 px-4 py-2 text-sm font-medium text-[var(--muted)]">
-              Your Name Here
-            </span>
-          </div>
-        </div>
+        <ProductGallery
+          images={imageUrls}
+          productName={product.name}
+          placeholder={galleryPlaceholder}
+        />
 
-        {/* Info - matches reference layout */}
+        {/* Info */}
         <div className="bg-[var(--background)] rounded-2xl p-6 sm:p-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-            Chhavi Craft
+            {product.category?.name ?? "Chhavi Craft"}
           </p>
           <h1 className="mt-1 text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
             {product.name}
@@ -116,17 +130,17 @@ export default function ProductDetail({ product }: Props) {
 
           {/* Pricing */}
           <div className="mt-6 flex flex-wrap items-baseline gap-3">
-            {product.originalPrice && (
+            {originalPrice && (
               <span className="text-lg text-[var(--muted)] line-through">
-                Rs. {product.originalPrice.toLocaleString("en-IN")}.00
+                Rs. {originalPrice.toLocaleString("en-IN")}.00
               </span>
             )}
             <span className="text-2xl font-bold text-[var(--foreground)]">
-              Rs. {product.price.toLocaleString("en-IN")}.00
+              Rs. {displayPrice.toLocaleString("en-IN")}.00
             </span>
-            {product.tag && (
+            {tag && (
               <span className="rounded bg-[var(--accent)] px-2.5 py-0.5 text-xs font-medium text-white">
-                {product.tag}
+                {tag}
               </span>
             )}
           </div>
@@ -137,7 +151,11 @@ export default function ProductDetail({ product }: Props) {
             </Link>{" "}
             calculated at checkout.
           </p>
-          <p className="mt-1 text-sm font-medium text-red-600">12 sold in last 24 hours</p>
+          {product.stock > 0 && product.stock <= 30 && (
+            <p className="mt-1 text-sm font-medium text-red-600">
+              Please hurry! only {product.stock} left in stock
+            </p>
+          )}
 
           {/* Upload image */}
           <div className="mt-6">
@@ -174,9 +192,11 @@ export default function ProductDetail({ product }: Props) {
               className="mt-2 w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
             />
           </div>
-          <p className="mt-2 text-sm font-medium text-red-600">
-            Please hurry! only 30 left in stock
-          </p>
+          {product.stock > 0 && product.stock <= 30 && (
+            <p className="mt-2 text-sm font-medium text-red-600">
+              Please hurry! only {product.stock} left in stock
+            </p>
+          )}
 
           {/* Quantity */}
           <div className="mt-6">
@@ -192,13 +212,14 @@ export default function ProductDetail({ product }: Props) {
               <input
                 type="number"
                 min={1}
+                max={maxQuantity}
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                onChange={(e) => setQuantity(Math.max(1, Math.min(maxQuantity, parseInt(e.target.value, 10) || 1)))}
                 className="h-10 w-14 border-x border-[var(--border)] bg-[var(--card)] text-center text-sm text-[var(--foreground)] focus:outline-none"
               />
               <button
                 type="button"
-                onClick={() => setQuantity((q) => q + 1)}
+                onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
                 className="flex h-10 w-10 items-center justify-center text-[var(--foreground)] hover:bg-[var(--background)]"
               >
                 +
@@ -227,14 +248,16 @@ export default function ProductDetail({ product }: Props) {
           <form onSubmit={handleAddToCart} className="mt-6 flex flex-col gap-3 sm:flex-row">
             <button
               type="submit"
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-[var(--foreground)] bg-[var(--card)] px-6 py-4 text-base font-semibold text-[var(--foreground)] transition hover:bg-[var(--background)]"
+              disabled={product.stock <= 0}
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-[var(--foreground)] bg-[var(--card)] px-6 py-4 text-base font-semibold text-[var(--foreground)] transition hover:bg-[var(--background)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <RiShoppingCartLine className="h-5 w-5" />
-              {added ? "Added!" : "Add to cart"}
+              {product.stock <= 0 ? "Out of stock" : added ? "Added!" : "Add to cart"}
             </button>
             <button
               type="button"
-              className="flex flex-1 items-center justify-center rounded-lg bg-[var(--accent)] px-6 py-4 text-base font-semibold text-white transition hover:opacity-90"
+              disabled={product.stock <= 0}
+              className="flex flex-1 items-center justify-center rounded-lg bg-[var(--accent)] px-6 py-4 text-base font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Buy it now
             </button>

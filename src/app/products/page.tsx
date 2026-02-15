@@ -3,25 +3,14 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense, useMemo, useState } from "react";
-import { RiQrCodeLine, RiPriceTag3Line, RiRestaurant2Line, RiCloseLine } from "react-icons/ri";
-import { MdPhotoLibrary } from "react-icons/md";
-import {
-  products,
-  productCategories,
-  getUniqueProductTypes,
-  getUniqueBrands,
-} from "@/lib/products";
+import { RiCloseLine } from "react-icons/ri";
+import { useGetProductsQuery } from "@/store/productsApi";
+import { useGetCategoryBySlugQuery } from "@/store/categoriesApi";
+import { productCategories } from "@/lib/products";
 import Banner from "@/components/Banner";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import type { Product } from "@/lib/products";
-
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  "acrylic-qr-stand": RiQrCodeLine,
-  dog: RiPriceTag3Line,
-  "qr-menu-stand": RiRestaurant2Line,
-  "photo-album": MdPhotoLibrary,
-};
+import ProductCard from "@/components/ProductCard";
 
 const SORT_OPTIONS = [
   { value: "name-asc", label: "Alphabetically, A-Z" },
@@ -39,75 +28,29 @@ const PRICE_OPTIONS = [
   { value: "1200+", label: "₹1,200+" },
 ];
 
-function ProductCard({ product }: { product: Product }) {
-  const Icon = iconMap[product.slug] ?? RiQrCodeLine;
-  const isMenuStand = product.slug === "qr-menu-stand";
-
-  return (
-    <Link
-      href={`/products/${product.slug}`}
-      className="group block overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] transition hover:border-[var(--accent)] hover:shadow-lg"
-    >
-      <div className="relative aspect-square overflow-hidden">
-        <div
-          className={`flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br ${product.visualBg} p-4`}
-        >
-          <Icon className="h-12 w-12 text-[var(--foreground)] sm:h-14 sm:w-14" />
-          {isMenuStand && <RiQrCodeLine className="h-8 w-8 text-[var(--foreground)]" />}
-          <span className="text-[10px] font-medium text-[var(--muted)]">
-            {isMenuStand ? "Your Logo Here" : "Your Name Here"}
-          </span>
-        </div>
-        {product.tag && (
-          <span className="absolute bottom-2 left-2 rounded bg-[var(--accent)] px-2 py-0.5 text-xs font-medium text-white">
-            {product.tag}
-          </span>
-        )}
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-[var(--foreground)] line-clamp-2 group-hover:text-[var(--accent)]">
-          {product.name}
-        </h3>
-        {product.variant && (
-          <p className="mt-0.5 text-sm text-[var(--muted)] line-clamp-1">{product.variant}</p>
-        )}
-        <div className="mt-2 flex items-center gap-2">
-          <span className="font-semibold text-[var(--accent)]">
-            ₹{product.price.toLocaleString("en-IN")}
-          </span>
-          {product.originalPrice && (
-            <span className="text-sm text-[var(--muted)] line-through">
-              ₹{product.originalPrice.toLocaleString("en-IN")}
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 function ProductsContent() {
   const searchParams = useSearchParams();
   const categorySlug = searchParams.get("category") ?? "";
-  const [availability, setAvailability] = useState("");
   const [priceFilter, setPriceFilter] = useState(searchParams.get("price") ?? "");
-  const [productType, setProductType] = useState(searchParams.get("type") ?? "");
-  const [brand, setBrand] = useState(searchParams.get("brand") ?? "");
   const [sort, setSort] = useState(searchParams.get("sort") ?? "name-asc");
 
-  const categoryInfo = categorySlug ? productCategories[categorySlug] : null;
-  const productTypes = getUniqueProductTypes();
-  const brands = getUniqueBrands();
+  const { data: products = [], isLoading, isError } = useGetProductsQuery(
+    categorySlug ? { category: categorySlug } : undefined
+  );
+
+  const { data: categoryFromApi } = useGetCategoryBySlugQuery(categorySlug, {
+    skip: !categorySlug,
+  });
+
+  const categoryInfo = categoryFromApi
+    ? { name: categoryFromApi.name, description: categoryFromApi.description ?? "" }
+    : categorySlug
+      ? productCategories[categorySlug]
+      : null;
 
   const { filteredProducts, totalCount } = useMemo(() => {
     let result = [...products];
 
-    if (categorySlug) {
-      result = result.filter((p) => p.categorySlug === categorySlug);
-    }
-    if (availability === "in-stock") {
-      result = result.filter(() => true);
-    }
     if (priceFilter) {
       const [minStr, maxStr] = priceFilter.split("-");
       const min = parseInt(minStr, 10);
@@ -116,12 +59,6 @@ function ProductsContent() {
         const price = p.price;
         return price >= min && (max === Infinity || price <= max);
       });
-    }
-    if (productType) {
-      result = result.filter((p) => p.productType === productType);
-    }
-    if (brand) {
-      result = result.filter((p) => p.brand === brand);
     }
 
     const totalCount = result.length;
@@ -132,7 +69,7 @@ function ProductsContent() {
     else if (sort === "price-desc") result.sort((a, b) => b.price - a.price);
 
     return { filteredProducts: result, totalCount };
-  }, [categorySlug, availability, priceFilter, productType, brand, sort]);
+  }, [products, priceFilter, sort]);
 
   const activeFilters = [
     priceFilter && {
@@ -140,24 +77,47 @@ function ProductsContent() {
       label: PRICE_OPTIONS.find((o) => o.value === priceFilter)?.label ?? priceFilter,
       onRemove: () => setPriceFilter(""),
     },
-    productType && {
-      key: "type",
-      label: productType,
-      onRemove: () => setProductType(""),
-    },
-    brand && {
-      key: "brand",
-      label: brand,
-      onRemove: () => setBrand(""),
-    },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
-  const removeAllFilters = () => {
-    setPriceFilter("");
-    setProductType("");
-    setBrand("");
-    setAvailability("");
-  };
+  const removeAllFilters = () => setPriceFilter("");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen">
+        <Banner />
+        <Nav />
+        <main className="pb-16">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+            <div className="h-10 w-48 animate-pulse rounded bg-[var(--border)]" />
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="aspect-square animate-pulse rounded-2xl bg-[var(--border)]" />
+              ))}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen">
+        <Banner />
+        <Nav />
+        <main className="pb-16">
+          <div className="mx-auto max-w-7xl px-4 py-12 text-center">
+            <p className="text-[var(--muted)]">Unable to load products. Please try again later.</p>
+            <Link href="/products" className="mt-4 inline-block text-[var(--accent)] hover:underline">
+              Refresh
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -177,14 +137,6 @@ function ProductsContent() {
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-medium text-[var(--foreground)]">Filter:</span>
               <select
-                value={availability}
-                onChange={(e) => setAvailability(e.target.value)}
-                className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-              >
-                <option value="">Availability</option>
-                <option value="in-stock">In stock</option>
-              </select>
-              <select
                 value={priceFilter}
                 onChange={(e) => setPriceFilter(e.target.value)}
                 className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
@@ -192,30 +144,6 @@ function ProductsContent() {
                 {PRICE_OPTIONS.map((o) => (
                   <option key={o.value || "any"} value={o.value}>
                     {o.label}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={productType}
-                onChange={(e) => setProductType(e.target.value)}
-                className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-              >
-                <option value="">Product type</option>
-                {productTypes.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-              >
-                <option value="">Brand</option>
-                {brands.map((b) => (
-                  <option key={b} value={b}>
-                    {b}
                   </option>
                 ))}
               </select>

@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getUser()
       .unwrap()
       .then((res) => {
-        setUser(res.user);
+        setUser(res?.user ?? storedUser ?? null);
         setMounted(true);
       })
       .catch(() => {

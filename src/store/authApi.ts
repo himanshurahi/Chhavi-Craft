@@ -18,6 +18,20 @@ export type LoginRequest = {
   password: string;
 };
 
+/** Shape of auth payload inside the API wrapper */
+export type AuthData = {
+  user: AuthUser;
+  token: string;
+  token_type: string;
+};
+
+/** API returns { success, message, data: AuthData } */
+export type AuthApiResponse = {
+  success: boolean;
+  message: string;
+  data: AuthData;
+};
+
 export type RegisterResponse = {
   message: string;
   user: AuthUser;
@@ -36,6 +50,14 @@ export type UserResponse = {
   user: AuthUser;
 };
 
+/** API may return wrapped { success, message, data: { user } } */
+export type UserApiResponse = {
+  success?: boolean;
+  message?: string;
+  data?: { user: AuthUser };
+  user?: AuthUser;
+};
+
 export type LogoutResponse = {
   message: string;
 };
@@ -48,12 +70,13 @@ export const authApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      transformResponse: (response: RegisterResponse) => {
-        if (typeof window !== "undefined" && response.token) {
-          localStorage.setItem("chhavi_craft_token", response.token);
-          localStorage.setItem("chhavi_craft_user", JSON.stringify(response.user));
+      transformResponse: (response: AuthApiResponse): RegisterResponse => {
+        const { user, token, token_type } = response.data;
+        if (typeof window !== "undefined" && token) {
+          localStorage.setItem("chhavi_craft_token", token);
+          localStorage.setItem("chhavi_craft_user", JSON.stringify(user));
         }
-        return response;
+        return { message: response.message, user, token, token_type };
       },
     }),
     login: builder.mutation<LoginResponse, LoginRequest>({
@@ -62,21 +85,23 @@ export const authApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      transformResponse: (response: LoginResponse) => {
-        if (typeof window !== "undefined" && response.token) {
-          localStorage.setItem("chhavi_craft_token", response.token);
-          localStorage.setItem("chhavi_craft_user", JSON.stringify(response.user));
+      transformResponse: (response: AuthApiResponse): LoginResponse => {
+        const { user, token, token_type } = response.data;
+        if (typeof window !== "undefined" && token) {
+          localStorage.setItem("chhavi_craft_token", token);
+          localStorage.setItem("chhavi_craft_user", JSON.stringify(user));
         }
-        return response;
+        return { message: response.message, user, token, token_type };
       },
     }),
     getUser: builder.query<UserResponse, void>({
       query: () => "/user",
-      transformResponse: (response: UserResponse) => {
-        if (typeof window !== "undefined" && response.user) {
-          localStorage.setItem("chhavi_craft_user", JSON.stringify(response.user));
+      transformResponse: (response: UserApiResponse): UserResponse => {
+        const user = response.data?.user ?? response.user;
+        if (typeof window !== "undefined" && user) {
+          localStorage.setItem("chhavi_craft_user", JSON.stringify(user));
         }
-        return response;
+        return { user: user! };
       },
     }),
     logout: builder.mutation<LogoutResponse, void>({
